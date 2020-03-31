@@ -1,0 +1,160 @@
+doctype html
+// saved from url=(0088)https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/index.html
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+  title KVS WebRTC Test Page
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  link(rel='stylesheet' href='/kvs/bootstrap.min.css')
+  link(rel='stylesheet' href='/kvs/loader.css')
+  link(rel='stylesheet' href='/kvs/app.css')
+  script(src='/kvs/jquery-3.3.1.slim.min.js')
+  script(src='/kvs/bootstrap.min.js')
+  script(src='/kvs/aws-sdk-2.585.0.min.js')
+  script(src='/kvs/url-search-params')
+  link(rel='icon' type='image/png' href='https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-js/examples/favicon.ico')
+.container.mt-3
+  h1 KVS WebRTC Test Page
+  p
+    | This is the KVS Signaling Channel WebRTC test page. Use this page to connect to a signaling channel as either the MASTER or as a VIEWER.
+  .row.loader.d-none
+  #main
+    form#form
+      h4 KVS Endpoint
+      .form-group
+        label Region
+        input#region.form-control(type='text' value='us-west-2')
+      .form-group
+        label
+          | Endpoint 
+          small (optional)
+        input#endpoint.form-control(type='text' placeholder='Endpoint')
+      h4 AWS Credentials
+      .form-group
+        label Access Key ID
+        input#accessKeyId.form-control(type='text' placeholder='Access key id')
+      .form-group
+        label Secret Access Key
+        input#secretAccessKey.form-control(type='password' placeholder='Secret access key')
+      .form-group
+        label
+          | Session Token 
+          small (optional)
+        input#sessionToken.form-control(type='password' placeholder='Session token')
+      h4 Signaling Channel
+      .form-group
+        label Channel Name
+        input#channelName.form-control(type='text' placeholder='Channel')
+      .form-group
+        label
+          | Client Id 
+          small (optional)
+        input#clientId.form-control(type='text' placeholder='Client id')
+      h4 Tracks
+      p
+        small Control which media types are transmitted to the remote client.
+      .form-group
+        .form-check.form-check-inline
+          input#sendVideo.form-check-input(type='checkbox' value='video' checked='')
+          label.form-check-label Send Video
+        .form-check.form-check-inline
+          input#sendAudio.form-check-input(type='checkbox' value='audio')
+          label.form-check-label Send Audio
+        .form-check.form-check-inline
+          input#openDataChannel.form-check-input(type='checkbox' value='datachannel')
+          label.form-check-label Open DataChannel
+      h4 Video Resolution
+      p
+        small Set the desired video resolution and aspect ratio.
+      .form-group
+        .form-check.form-check
+          input#widescreen.form-check-input(type='radio' name='resolution' value='option1' checked='')
+          label.form-check-label(for='widescreen')
+            | 1280x720 
+            small (16:9 widescreen)
+        .form-check.form-check
+          input#fullscreen.form-check-input(type='radio' name='resolution' value='option2')
+          label.form-check-label(for='fullscreen')
+            | 640x480 
+            small (4:3 fullscreen)
+      h4 NAT Traversal
+      p
+        small Control settings for ICE candidate generation.
+      .form-group
+        .form-check.form-check
+          input#natTraversalEnabled.form-check-input(type='radio' name='natTraversal' value='option2' checked='')
+          label.form-check-label(for='natTraversalEnabled') STUN/TURN
+        .form-check.form-check
+          input#forceTURN.form-check-input(type='radio' name='natTraversal' value='option3')
+          label.form-check-label(for='forceTURN')
+            | TURN Only 
+            small (force cloud relay)
+        .form-check.form-check
+          input#natTraversalDisabled.form-check-input(type='radio' name='natTraversal' value='option1')
+          label.form-check-label(for='natTraversalDisabled') Disabled
+      .form-group
+        .form-check.form-check-inline
+          input#useTrickleICE.form-check-input(type='checkbox' value='useTrickleICE' checked='')
+          label.form-check-label
+            | Use trickle ICE 
+            small (not supported by Alexa devices)
+      div
+        button#master-button.btn.btn-primary(type='button') Start Master
+        button#viewer-button.btn.btn-primary(type='button') Start Viewer
+        button#create-channel-button.btn.btn-primary(type='button') Create Channel
+    #master.d-none
+      h2 Master
+      .row
+        .col
+          h5 Master Section
+          .video-container
+            video.local-view(autoplay='' playsinline='' controls='' muted='')
+        .col
+          h5 Viewer Return Channel
+          .video-container
+            video.remote-view(autoplay='' playsinline='' controls='')
+      .row.datachannel
+        .col
+          .form-group
+            textarea.form-control.local-message(type='text' placeholder='DataChannel Message')  
+        .col
+          .card.bg-light.mb-3
+            pre.remote-message.card-body.text-monospace.preserve-whitespace.
+              
+      div
+        span.send-message.datachannel
+          button.btn.btn-primary(type='button') Send DataChannel Message
+        button#stop-master-button.btn.btn-primary(type='button') Stop Master
+    #viewer.d-none
+      h2 Viewer
+      .row
+        .col
+          h5 Return Channel
+          .video-container
+            video.local-view(autoplay='' playsinline='' controls='' muted='')
+        .col
+          h5 From Master
+          .video-container
+            video.remote-view(autoplay='' playsinline='' controls='')
+      .row.datachannel
+        .col
+          .form-group
+            textarea.form-control.local-message(type='text' placeholder='DataChannel Message')  
+        .col
+          .card.bg-light.mb-3
+            pre.remote-message.card-body.text-monospace.preserve-whitespace.
+              
+      div
+        span.send-message.datachannel
+          button.btn.btn-primary(type='button') Send DataChannel Message
+        button#stop-viewer-button.btn.btn-primary(type='button') Stop Viewer
+    h3#logs-header Logs
+    .card.bg-light.mb-3
+      pre#logs.card-body.text-monospace.preserve-whitespace.
+        
+#test
+script(src='/kvs/kvs-webrtc.js')
+script(src='/kvs/master.js')
+script(src='/kvs/viewer.js')
+script(src='/kvs/createSignalingChannel.js')
+script(src='/kvs/app.js')
+

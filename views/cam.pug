@@ -1,0 +1,21 @@
+doctype html
+head
+  // Shaka Player compiled library:
+  script(src='/js/cam.js')
+  // Your application source:
+
+  body
+    .display-cover
+      video(autoplay="")
+      canvas.d-none
+      .video-options
+        select.custom-select(name="" id="")
+          option(value="") Select camera
+      img.screenshot-image.d-none(alt="")
+      .controls
+        button.btn.btn-danger.play(title="Play")
+          i(data-feather="play-circle")
+        button.btn.btn-info.pause.d-none(title="Pause")
+          i(data-feather="pause")
+        button.btn.btn-outline-success.screenshot.d-none(title="ScreenShot")
+          i(data-feather="image")
